@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>AWS</title>
+</head>
+<body>
+  <div id="data-container"></div>
+
+  <script>
+    let email = localStorage.getItem('email');
+    let token = localStorage.getItem('token');
+
+    console.log(email)
+    // Make an HTTP GET request to the API endpoint
+    fetch(`https://localhost:3001/${email}`, {
+      headers: {
+        "Authorization": token
+      }
+    })
+      .then(response => response.json()) // Parse the response as JSON
+      .then(data => {
+        // Handle the retrieved data
+        const container = document.getElementById('data-container');
+        container.innerHTML = JSON.stringify(data);
+      })
+      .catch(error => {
+        console.error('Error:', error);
+      });
+  </script>
+</body>
+</html>

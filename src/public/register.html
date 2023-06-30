@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>AWS</title>
+  <link rel="stylesheet" href="index.css"/>
+</head>
+<body>
+  <div>
+    <div class="topnav">
+        <a href="/" id="home">Accueil</a>
+        <a href="/connexion" id="login">Connexion</a>
+    </div>
+
+    <div class="center">
+        <div class="form">
+            <h2 class="txt-center">Inscription</h2>
+            
+            <form method="post" action="/user/register">
+                Prénom : <input type="text" name="firstName" id="firstname"/><br>
+                Nom : <input type="text" name="lastName" id="lastname"/><br>
+                Email : <input type="email" name="email" id="email"/><br>
+                Mot de passe : <input type="password" name="password" id="password"/><br><br>
+
+                <span class="small">Vous avez un compte ? <a href="/login" class="small">Se connecter</a></span>
+
+                <div class="center">
+                    <button id="register">Valider</button>
+                </div>
+            </form>
+        </div>
+    </div>
+  </div>
+
+  <script>
+    if(window.location.pathname === '/') {
+        document.getElementById('home').classList.add("active");
+    }
+    else if(window.location.pathname === '/connexion' || window.location.pathname === '/inscription') {
+        document.getElementById('login').classList.add("active");
+    }
+    else if(window.location.pathname === '/profil') {
+        document.getElementById('login').classList.add("active");
+    }
+
+    document.getElementById("register").addEventListener("click", function(event) {
+      event.preventDefault();       
+
+      var email = document.getElementById("email").value;
+      var password = document.getElementById("password").value;
+      var firstname = document.getElementById("firstname").value;
+      var lastname = document.getElementById("lastname").value;
+
+      var data = {
+        email: email,
+        password: password,
+        firstName: firstname,
+        lastName: lastname
+      };
+
+      fetch("/user/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(data)
+      })
+        .then(response => response.json())
+        .then(data => {
+            window.location.replace("/connexion");
+        })
+        .catch(error => {
+          console.error(error);
+        });
+      });
+    
+  </script>
+</body>
+</html>

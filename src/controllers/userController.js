@@ -98,7 +98,7 @@ exports.userLogin = (req, res) => {
                                 }
                             ).then((user) => {
                                 res.status(200);
-                                res.json({message: `Utilisateur connecté : ${user.email}`, token, user: userData});                            
+                                res.json({message: `Utilisateur connecté : ${userData.email}`, token, user: userData});                            
                             })
                             .catch((error) => {
                                 res.status(500);

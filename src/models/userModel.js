@@ -22,6 +22,11 @@ const User = db.define('users', {
     password: { 
         type: DataTypes.STRING, 
         allowNull: false 
+    },
+    connected: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: 0
     }
 });
 

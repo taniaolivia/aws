@@ -34,9 +34,9 @@ exports.userRegister = (req, res) => {
                                 lastName: newUser.lastName,
                                 email: newUser.email,
                                 password: newUser.password,
+                                connected: 0
                             }).then(result => {
-                                res.redirect('/login.html');
-                                //res.status(200).json({message: "Utilisateur a été bien créé", user: result});
+                                res.status(200).json({message: "Utilisateur a été bien créé", user: result});
                                 console.log(result);
                             }).catch((error) => {
                                 res.status(401).json({message: "Rêquete invalide"});
@@ -76,7 +76,8 @@ exports.userLogin = (req, res) => {
                     let userData = {
                         id: user.id,
                         email: user.email,
-                        password: user.password
+                        password: user.password,
+                        connected: 1
                     }
 
                     jwt.sign(userData, process.env.JWT_KEY, {expiresIn: "30 days"}, (error, token) => {
@@ -86,8 +87,25 @@ exports.userLogin = (req, res) => {
                             res.json({message: "Impossible de générer le token"})
                         }
                         else{
-                            res.status(200);
-                            res.json({message: `Utilisateur connecté : ${user.email}`, token, user: userData});
+                            User.update(
+                                {
+                                    connected: 1
+                                },
+                                {
+                                    where: {
+                                        id: user.id
+                                    }
+                                }
+                            ).then((user) => {
+                                res.status(200);
+                                res.json({message: `Utilisateur connecté : ${user.email}`, token, user: userData});                            
+                            })
+                            .catch((error) => {
+                                res.status(500);
+                                console.log(error);
+                                res.json({message: "Utilisateur non trouvé"});
+                            });
+                           
                         }
                     });
                 }
@@ -104,15 +122,41 @@ exports.userLogin = (req, res) => {
      });
 }
 
-// Affichage les détails d'un utilisateur par email
-exports.getUserByEmail = (req, res) => {
+// Affichage les détails d'un utilisateur par id
+exports.getUserById = (req, res) => {
     db.sync().then(() => {
         User.findOne({
             where: {
-                email: req.params.email
+                id: req.params.id
             }
         }).then((user) => {
             res.status(200).json({user});
+        })
+        .catch((error) => {
+            res.status(500);
+            console.log(error);
+            res.json({message: "Utilisateur non trouvé"});
+        });
+     }).catch((error) => {
+        res.status(401).json({message: "Erreur serveur"});
+        console.error('Erreur serveur : ', error);
+     });
+}
+
+// Déconnexion d'utilisateur par id
+exports.userLogout = (req, res) => {
+    db.sync().then(() => {
+        User.update(
+            {
+                connected: 0
+            },
+            {
+                where: {
+                    id: req.params.id
+                }
+            }
+        ).then((user) => {
+            res.status(200).json({msg: 'Utilisateur a été bien déconnecté', user});
         })
         .catch((error) => {
             res.status(500);

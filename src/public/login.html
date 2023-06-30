@@ -1,0 +1,53 @@
+<html>
+<head>
+  <title>AWS</title>
+</head>
+<body>
+  <div>
+    <h2>Connexion</h2>
+    <form>
+      Email : <input type="text" name="email" id="email"/><br>
+      Mot de passe : <input type="password" name="password" id="password"/><br>
+      <button id="login">Valider</button>
+    </form>
+  </div>
+  <script>
+    document.getElementById("login").addEventListener("click", function(event) {
+      event.preventDefault();       
+
+      var email = document.getElementById("email").value;
+      var password = document.getElementById("password").value;
+
+      var data = {
+        email: email,
+        password: password
+      };
+
+      fetch("/user/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(data)
+      })
+        .then(response => response.json())
+        .then(data => {
+          console.log(data)
+          if (data.token && data.email) {
+            localStorage.setItem("email", data.email);
+            localStorage.setItem("token", data.token);
+
+              window.location.replace("/connectedUser.html");
+            
+          } else {
+            console.log(data.message);
+          }
+        })
+        .catch(error => {
+          console.error(error);
+        });
+      });
+    
+  </script>
+</body>
+</html>

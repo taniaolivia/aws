@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>AWS</title>
+  <link rel="stylesheet" href="index.css"/>
+</head>
+<body>
+  <div class="topnav">
+    <a href="/" id="home">Accueil</a>
+    <a href="/profil" id="login">Profil</a>
+  </div>
+
+  <div class="center">
+    <div class="form">
+      <h2 class="txt-center">Profil</h2>
+
+      <div class="data">
+        <p>Prénom : <span id="firstname"></span></p>
+        <p>Nom : <span id="lastname"></span></p>
+        <p>Email : <span id="email"></span></p>
+        <p>Mot de passe : <span id="password"></span></p>
+        <p>Date de création : <span id="created"></span></p>
+        <p>Statut : <span id="connected"></span></p>
+      </div>
+    </div>
+
+    <div class="center">
+      <button id="logout">Déconnexion</button>
+    </div>
+
+    <div class="bottom">
+      @AWS 2023 créé par Tania OLIVIA
+    </div>
+  </div>
+
+  <script>
+    if(window.location.pathname === '/') {
+      document.getElementById('home').classList.add("active");
+    }
+    else if(window.location.pathname === '/connexion' || window.location.pathname === '/inscription') {
+      document.getElementById('login').classList.add("active");
+    }
+    else if(window.location.pathname === '/profil') {
+      document.getElementById('login').classList.add("active");
+    }
+
+    let id = localStorage.getItem('id');
+    let token = localStorage.getItem('token');
+
+      fetch(`/users/${id}`, {
+        headers: {
+          "Authorization": token
+        }
+      })
+      .then(response => response.json())
+      .then(data => {
+        const firstname = document.getElementById('firstname');
+        firstname.textContent = data.user.firstName;
+
+        const lastname = document.getElementById('lastname');
+        lastname.textContent = data.user.lastName;
+
+        const email = document.getElementById('email');
+        email.textContent = data.user.email;
+
+        const password = document.getElementById('password');
+        password.textContent = data.user.password;
+
+        const created = document.getElementById('created');
+        created.textContent = new Date(data.user.createdAt).toLocaleString();
+        
+        const connected = document.getElementById('connected');
+        if(data.user.connected === true) {
+          connected.textContent = "En ligne";
+        }
+        else {
+          connected.textContent = "Hors ligne";
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+      });
+
+    document.getElementById("logout").addEventListener("click", function(event) {
+      fetch(`/user/logout/${id}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json"
+        }
+      })
+      .then(response => response.json())
+      .then(() => {
+      
+        localStorage.setItem("id", "");
+        localStorage.setItem("email", "");
+        localStorage.setItem("token", "");
+        localStorage.setItem("connected", "no");
+
+        window.location.replace("/");        
+      })
+      .catch(error => {
+        console.error(error);
+      });
+    });
+  </script>
+</body>
+</html>

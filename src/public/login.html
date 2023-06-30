@@ -1,0 +1,88 @@
+<html>
+<head>
+  <title>AWS</title>
+  <link rel="stylesheet" href="index.css"/>
+</head>
+<body>
+  <div>
+    <div class="topnav">
+      <a href="/" id="home">Accueil</a>
+      <a href="/connexion" id="login">Connexion</a>
+    </div>
+
+    <div class="center">
+      <div class="form">
+        <h2 class="txt-center">Connexion</h2>
+
+        <form>
+          Email : <input type="email" name="email" id="email"/><br>
+          Mot de passe : <input type="password" name="password" id="password"/><br><br>
+
+          <span class="small">Pas de compte ? <a href="/inscription">S'inscrire</a></span>
+
+          <p><span class="small" id="error"></span></p>
+
+          <div class="center">
+            <button id="loginBtn">Valider</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div class="bottom">
+      @AWS 2023 créé par Tania OLIVIA
+    </div>
+  </div>
+
+  <script>
+    if(window.location.pathname === '/') {
+      document.getElementById('home').classList.add("active");
+    }
+    else if(window.location.pathname === '/connexion' || window.location.pathname === '/inscription') {
+      document.getElementById('login').classList.add("active");
+    }
+    else if(window.location.pathname === '/profil') {
+      document.getElementById('login').classList.add("active");
+    }
+
+    document.getElementById("loginBtn").addEventListener("click", function(event) {
+      event.preventDefault();       
+
+      var email = document.getElementById("email").value;
+      var password = document.getElementById("password").value;
+
+      var data = {
+        email: email,
+        password: password,
+        connected: 1
+      };
+
+        fetch("/user/login", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(data)
+        })
+        .then(response => response.json())
+        .then(data => {
+          if (data.token && data.user.id) {
+            localStorage.setItem("id", data.user.id);
+            localStorage.setItem("email", data.user.email);
+            localStorage.setItem("token", data.token);
+            localStorage.setItem("connected", "yes");
+
+            window.location.replace("/profil");
+          } else {
+            console.log(data.message);
+            document.getElementById("error").textContent = "Vous n'avez pas encore un compte !";
+          }
+        })
+        .catch(error => {
+          console.error(error);
+        });
+      });
+    
+  </script>
+</body>
+</html>

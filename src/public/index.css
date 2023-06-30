@@ -83,7 +83,7 @@ input {
 }
 
 form {
-    margin: 40px 40px 10px 40px;
+    margin: 40px 40px 0 40px;
 }
 
 .small {
@@ -98,7 +98,7 @@ button {
     color: white;
     padding: 8px 10px;
     border-radius: 8px;
-    margin: 10px auto;
+    margin: 5px auto 15px auto;
     cursor: pointer;
 }
 
@@ -116,4 +116,8 @@ button {
 
 a {
     cursor: pointer;
+}
+
+#error {
+    color: red;
 }

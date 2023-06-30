@@ -20,6 +20,8 @@
 
           <span class="small">Pas de compte ? <a href="/inscription">S'inscrire</a></span>
 
+          <p><span class="small" id="error"></span></p>
+
           <div class="center">
             <button id="loginBtn">Valider</button>
           </div>
@@ -64,7 +66,6 @@
         })
         .then(response => response.json())
         .then(data => {
-          console.log(data)
           if (data.token && data.user.id) {
             localStorage.setItem("id", data.user.id);
             localStorage.setItem("email", data.user.email);
@@ -74,6 +75,7 @@
             window.location.replace("/profil");
           } else {
             console.log(data.message);
+            document.getElementById("error").textContent = "Vous n'avez pas encore un compte !";
           }
         })
         .catch(error => {

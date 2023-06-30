@@ -15,13 +15,15 @@
         <div class="form">
             <h2 class="txt-center">Inscription</h2>
             
-            <form method="post" action="/user/register">
+            <form method="post">
                 Prénom : <input type="text" name="firstName" id="firstname"/><br>
                 Nom : <input type="text" name="lastName" id="lastname"/><br>
                 Email : <input type="email" name="email" id="email"/><br>
                 Mot de passe : <input type="password" name="password" id="password"/><br><br>
 
                 <span class="small">Vous avez un compte ? <a href="/login">Se connecter</a></span>
+
+                <p><span class="small" id="error"></span></p>
 
                 <div class="center">
                     <button id="register">Valider</button>
@@ -70,7 +72,13 @@
       })
         .then(response => response.json())
         .then(data => {
-            window.location.replace("/connexion");
+            if(data.message === "Utilisateur est déjà existant") {
+                document.getElementById("error").textContent = "Un compte avec cet email est déjà existant !";
+            }
+            else {
+                console.log(data)
+                window.location.replace("/connexion");
+            }
         })
         .catch(error => {
           console.error(error);

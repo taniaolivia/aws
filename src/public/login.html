@@ -18,7 +18,7 @@
           Email : <input type="email" name="email" id="email"/><br>
           Mot de passe : <input type="password" name="password" id="password"/><br><br>
 
-          <span class="small">Pas de compte ? <a href="/inscription" class="small">S'inscrire</a></span>
+          <span class="small">Pas de compte ? <a href="/inscription">S'inscrire</a></span>
 
           <div class="center">
             <button id="loginBtn">Valider</button>
@@ -26,7 +26,12 @@
         </form>
       </div>
     </div>
+
+    <div class="bottom">
+      @AWS 2023 créé par Tania OLIVIA
+    </div>
   </div>
+
   <script>
     if(window.location.pathname === '/') {
       document.getElementById('home').classList.add("active");

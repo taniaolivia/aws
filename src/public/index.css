@@ -1,5 +1,9 @@
 body {
     font-family: Calibri, sans-serif;
+    padding: 5px;
+    margin: 5px;
+    overflow: hidden;
+    width: 98%;
 }
 
 .topnav {
@@ -26,6 +30,17 @@ body {
     color: white;
 }
 
+.bottom {
+    background-color: #333;
+    overflow: hidden;
+    position: fixed;
+    bottom: 0;
+    color: white;
+    width: 97%;
+    text-align: center;
+    padding: 8px;
+}
+
 .center {
     display: flex;
     flex-direction: column;
@@ -44,9 +59,9 @@ body {
     align-items: center;
     flex-wrap: wrap;
     position: absolute;
-    top: 45%;
+    top: 40%;
     left: 50%;
-    transform: translateY(45%) translateX(-50%);
+    transform: translateY(40%) translateX(-50%);
 }
 
 .form {
@@ -71,7 +86,7 @@ form {
     margin: 40px 40px 10px 40px;
 }
 
-small {
+.small {
     margin: 20px 0;
     font-size: 13px;
 }

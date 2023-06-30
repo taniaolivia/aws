@@ -2,17 +2,47 @@
 <html>
 <head>
   <title>AWS</title>
+  <link rel="stylesheet" href="index.css"/>
 </head>
 <body>
   <div>
-    <h2>Inscription</h2>
-    <form method="post" action="/user/register">
-      Prénom : <input type="text" name="firstName"/><br>
-      Nom : <input type="text" name="lastName"/><br>
-      Email : <input type="email" name="email"/><br>
-      Mot de passe : <input type="password" name="password"/><br>
-      <button>Valider</button>
-    </form>
+    <div class="topnav">
+      <a href="/" id="home">Accueil</a>
+      <a href="/connexion" id="login">Connexion</a>
+    </div>
+
+    <div class="center2">
+      <h2>Bienvenue <span id="email"></span>!</h2>
+    </div>
   </div>
+
+  <script>
+    var connected = localStorage.getItem('connected');
+    var user = localStorage.getItem('email');
+
+    if(window.location.pathname === '/') {
+      document.getElementById('home').classList.add("active");
+    }
+    else if(window.location.pathname === '/connexion' || window.location.pathname === '/inscription') {
+      document.getElementById('login').classList.add("active");
+    }
+    else if(window.location.pathname === '/profil') {
+      document.getElementById('login').classList.add("active");
+    }
+
+    if (connected === "yes") {
+      document.getElementById('login').href = "/profil";
+      document.getElementById('login').textContent = "Profil";
+    } 
+    else if(connected === "no"){
+      document.getElementById('login').href = "/connexion";
+      document.getElementById('login').textContent = "Connexion";
+    }
+
+    if(user !== "") {
+      document.getElementById('email').textContent = user;
+    }
+   
+  </script>
 </body>
 </html>

@@ -25,7 +25,7 @@ exports.userRegister = (req, res) => {
                         }
                     }).then(existingUser => {
                         if(existingUser) {
-                            res.json({message: "Utilisateur est déjà existant"});
+                            res.status(400).json({message: "Utilisateur est déjà existant"});
                         }
                         else {
                             User.create({
@@ -39,13 +39,13 @@ exports.userRegister = (req, res) => {
                                 res.status(200).json({message: "Utilisateur a été bien créé", user: result});
                                 console.log(result);
                             }).catch((error) => {
-                                res.status(401).json({message: "Rêquete invalide"});
+                                res.status(400).json({message: "Rêquete invalide"});
                                 console.log(error);
                             });
                         }
                     })
                  }).catch((error) => {
-                    res.json({message: "Erreur serveur"});
+                    res.status(500).json({message: "Erreur serveur"});
                     console.error('Erreur serveur : ', error);
                  });
             }
@@ -66,58 +66,64 @@ exports.userLogin = (req, res) => {
                 email: req.body.email
             }
         }).then((user) => {
-            bcrypt.compare(req.body.password, user.password, (error, result) => {
-                if(error){
-                    res.status(401);
-                    console.log(error);
-                    res.json({message: "Mot de passe incorrect"})
-                }
-                else{
-                    let userData = {
-                        id: user.id,
-                        email: user.email,
-                        password: user.password,
-                        connected: 1
+            if(user) {
+                bcrypt.compare(req.body.password, user.password, (error, result) => {
+                    if(error){
+                        res.status(401);
+                        console.log(error);
+                        res.json({message: "Mot de passe incorrect"})
                     }
+                    else{
+                        let userData = {
+                            id: user.id,
+                            email: user.email,
+                            password: user.password,
+                            connected: 1
+                        }
 
-                    jwt.sign(userData, process.env.JWT_KEY, {expiresIn: "30 days"}, (error, token) => {
-                        if(error){
-                            res.status(500);
-                            console.log(error);
-                            res.json({message: "Impossible de générer le token"})
-                        }
-                        else{
-                            User.update(
-                                {
-                                    connected: 1
-                                },
-                                {
-                                    where: {
-                                        id: user.id
-                                    }
-                                }
-                            ).then((user) => {
-                                res.status(200);
-                                res.json({message: `Utilisateur connecté : ${userData.email}`, token, user: userData});                            
-                            })
-                            .catch((error) => {
-                                res.status(500);
+                        jwt.sign(userData, process.env.JWT_KEY, {expiresIn: "30 days"}, (error, token) => {
+                            if(error){
+                                res.status(401);
                                 console.log(error);
-                                res.json({message: "Utilisateur non trouvé"});
-                            });
-                           
-                        }
-                    });
-                }
-            })
+                                res.json({message: "Impossible de générer le token"})
+                            }
+                            else{
+                                User.update(
+                                    {
+                                        connected: 1
+                                    },
+                                    {
+                                        where: {
+                                            id: user.id
+                                        }
+                                    }
+                                ).then((user) => {
+                                    res.status(200);
+                                    res.json({message: `Utilisateur connecté : ${userData.email}`, token, user: userData});                            
+                                })
+                                .catch((error) => {
+                                    res.status(404);
+                                    console.log(error);
+                                    res.json({message: "Utilisateur non trouvé"});
+                                });
+                            
+                            }
+                        });
+                    }
+                })
+            }
+            else {
+                res.status(404);
+                res.json({message: "Utilisateur non trouvé"});
+            }
         })
         .catch((error) => {
-            res.status(500);
+            res.status(404);
             console.log(error);
             res.json({message: "Utilisateur non trouvé"});
         });
      }).catch((error) => {
-        res.status(401).json({message: "Erreur serveur"});
+        res.status(500).json({message: "Erreur serveur"});
         console.error('Erreur serveur : ', error);
      });
 }
@@ -133,12 +139,12 @@ exports.getUserById = (req, res) => {
             res.status(200).json({user});
         })
         .catch((error) => {
-            res.status(500);
+            res.status(404);
             console.log(error);
             res.json({message: "Utilisateur non trouvé"});
         });
      }).catch((error) => {
-        res.status(401).json({message: "Erreur serveur"});
+        res.status(500).json({message: "Erreur serveur"});
         console.error('Erreur serveur : ', error);
      });
 }
@@ -159,12 +165,12 @@ exports.userLogout = (req, res) => {
             res.status(200).json({msg: 'Utilisateur a été bien déconnecté', user});
         })
         .catch((error) => {
-            res.status(500);
+            res.status(404);
             console.log(error);
             res.json({message: "Utilisateur non trouvé"});
         });
      }).catch((error) => {
-        res.status(401).json({message: "Erreur serveur"});
+        res.status(500).json({message: "Erreur serveur"});
         console.error('Erreur serveur : ', error);
      });
 }

@@ -5,7 +5,8 @@ module.exports = (server) => {
 
 server.post("/user/register", cors(), userController.userRegister);
 server.post("/user/login", cors(), userController.userLogin);
+server.patch("/user/logout/:id", cors(), userController.userLogout);
 
-server.get("/user/:email", jwtMiddleware.authenticateUser, cors(), userController.getUserByEmail);
+server.get("/users/:id", jwtMiddleware.authenticateUser, cors(), userController.getUserById);
 
 }
